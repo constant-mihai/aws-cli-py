@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/python3
 from termcolor import colored
 import pprint
 import boto3
@@ -39,6 +39,7 @@ def filter_instances(base, filters=None):
 def get_state_color(detail):
     d = detail
     state = d["state"]["Name"]
+    state_color = "yellow"
     if state == "running":
         state_color = "green"
     elif state == "stopped":
