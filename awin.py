@@ -24,9 +24,10 @@ def filter_instances(base, filters=None):
     for i in filtered:
         el = {}
         name = ""
-        for t in i.tags:
-            if t['Key'] == 'Name':
-                name = t['Value']
+        if i.tags != None:
+            for t in i.tags:
+                if t['Key'] == 'Name':
+                    name = t['Value']
         el["name"] = name
         el["id"] = i.id
         el["public_ip_address"] = i.public_ip_address
