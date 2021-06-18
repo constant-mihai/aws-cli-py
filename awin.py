@@ -2,7 +2,8 @@
 from termcolor import colored
 import pprint
 import boto3
-import fillin
+import os
+#import fillin
 
 DEFAULT_REGION = "eu-west-1"
 DEFAULT_FILTERS =  [{
@@ -78,10 +79,7 @@ def print_instance_details(details):
 """
 Main
 """
-region = input("Region [default: eu-west-1]: ")
-if region == "":
-    region = DEFAULT_REGION
-
+region = os.getenv('AWS_REGION', "eu-west-1")
 ec2 = boto3.resource('ec2', region)
 
 base = ec2.instances.filter()
