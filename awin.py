@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 from termcolor import colored
-import pprint
 import boto3
 import os
 #import fillin
+import argparse
+import sys
 
 DEFAULT_REGION = "eu-west-1"
 DEFAULT_FILTERS =  [{
@@ -76,16 +77,41 @@ def print_instance_details(details):
                     private_ip["key"], str(private_ip["val"]),
                     state["key"], state["val"]))
 
-"""
-Main
-"""
-region = os.getenv('AWS_REGION', "eu-west-1")
-ec2 = boto3.resource('ec2', region)
+def parse_args(argv):
+    """ Parse arguments """
+    parser = argparse.ArgumentParser(description = 'AWS cli')
+    parser.add_argument('--instance-id',
+            dest = 'instance_id',
+            help = 'Instance Id',
+            type = str)
+    return parser.parse_args(argv[1:])
 
-base = ec2.instances.filter()
+def main(argv):
+    """
+    Main
+    """
+    args = parse_args(argv)
+    region = os.getenv('AWS_REGION', "eu-west-1")
+    ec2 = boto3.resource('ec2', region)
+    # tags = fillin.ask_for_tags()
+    #instance_filters = []
+    #instance_filters.append({'Name': 'instance-id', 'Values': [args.instance_id]})
 
-# instance_filters = []
-# instance_filters.append({'Name': 'tag:Squad', 'Values': ['*']})
-# tags = fillin.ask_for_tags()
-details = filter_instances(base)
-print_instance_details(details)
+    if args.instance_id:
+        base = ec2.instances.filter(InstanceIds=[args.instance_id])
+        # print(dir(base))
+        # print(vars(base))
+        for i in base:
+            # print(dir(i))
+            # print(vars(i))
+            print("Tags:")
+            for t in i.tags:
+                print("\t{:<30}: {}".format(t['Key'], t['Value']))
+    else:
+        base = ec2.instances.filter()
+        details = filter_instances(base)
+        print_instance_details(details)
+
+
+if __name__ == '__main__':
+    main(sys.argv)
